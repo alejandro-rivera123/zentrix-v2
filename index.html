@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zentrix Attendance | Asistencia de primaria en un minuto</title>
+<meta name="description" content="Pasa lista de 1.° a 6.° de primaria desde el celular y sabe al instante quién falta. Piloto gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--tinta:#12264a;--papel:#f6f8fc;--blanco:#fff;--ambar:#f2b705;--verde:#1f9d6b;--rojo:#d64545;--gris:#5b6478;--linea:#d9dfeb}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Public Sans',system-ui,sans-serif;color:var(--tinta);background:var(--papel);line-height:1.6;font-size:17px}
+h1,h2,h3{font-family:'Bricolage Grotesque','Public Sans',system-ui,sans-serif;line-height:1.1;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ambar);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.marca{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;text-decoration:none}
+.btn{display:inline-block;background:var(--ambar);color:var(--tinta);font-weight:600;font-size:16px;border:2px solid var(--tinta);border-radius:10px;padding:12px 22px;text-decoration:none;cursor:pointer;font-family:inherit}
+.btn:hover{background:#ffcb2e}
+.btn.sec{background:transparent}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding:48px 0 72px}
+.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;letter-spacing:-.02em}
+.hero p{font-size:19px;color:var(--gris);max-width:30em;margin:22px 0 30px}
+.acciones{display:flex;gap:14px;flex-wrap:wrap}
+.lista{background:var(--tinta);color:#fff;border-radius:18px;padding:22px 22px 18px;box-shadow:10px 10px 0 var(--ambar)}
+.lista h2{font-size:20px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.lista h2 small{font:500 14px 'Public Sans',sans-serif;opacity:.7}
+.lista .ayuda{font-size:14px;opacity:.75;margin:0 0 12px}
+.fila{display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:8px 12px 8px 16px;margin-bottom:7px;font-weight:500}
+.opciones{display:flex;gap:8px}
+.op{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:transparent;color:#fff;font:700 15px 'Public Sans',sans-serif;cursor:pointer;padding:0}
+.op:hover{border-color:#fff}
+.op.on.presente{background:var(--verde);border-color:var(--verde)}
+.op.on.falta{background:var(--rojo);border-color:var(--rojo)}
+.op.on.licencia{background:var(--ambar);border-color:var(--ambar);color:var(--tinta)}
+.resumen{display:flex;gap:18px;border-top:1px solid rgba(255,255,255,.2);padding-top:12px;margin-top:8px;font-size:15px}
+.resumen b{font-size:20px;margin-right:4px}
+section{padding:64px 0}
+section h2{font-size:clamp(30px,4vw,42px);font-weight:700;letter-spacing:-.01em;margin-bottom:16px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.dos p{margin:0 0 14px;color:var(--gris)}
+.dos p strong{color:var(--tinta)}
+.planes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px;align-items:end}
+.plan{background:var(--blanco);border:2px solid var(--linea);border-radius:16px;padding:26px}
+.plan.destacado{border-color:var(--tinta);padding-bottom:36px;box-shadow:6px 6px 0 var(--ambar)}
+.plan h3{font-size:24px}
+.precio{font:800 44px 'Bricolage Grotesque',sans-serif;margin:10px 0 2px}
+.precio span{font-size:18px;font-weight:600;color:var(--gris)}
+.plan p{margin:4px 0;color:var(--gris);font-size:16px}
+.plan .mes{color:var(--verde);font-weight:600}
+.nota{margin-top:22px;color:var(--gris);font-size:16px}
+.formulario{background:var(--tinta);color:#fff}
+.formulario .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px}
+.formulario p{opacity:.85}
+form{display:grid;gap:14px}
+label{display:grid;gap:5px;font-weight:500;font-size:15px}
+input,select{font:400 17px 'Public Sans',sans-serif;padding:12px 14px;border-radius:10px;border:2px solid transparent;background:#fff;color:var(--tinta);width:100%}
+input:focus-visible,select:focus-visible{outline:3px solid var(--ambar)}
+form .btn{width:100%;font-size:18px;padding:14px}
+form .btn[disabled]{opacity:.6;cursor:wait}
+.mensaje{min-height:1.4em;font-weight:500;margin:2px 0 0}
+.mensaje.ok{color:#7fe2b4}
+.mensaje.error{color:#ffb4b4}
+footer{padding:26px 0;color:var(--gris);font-size:15px}
+#atender{background:var(--blanco);border-top:1px solid var(--linea)}
+#atender .nota2{color:var(--gris);margin:0 0 20px;max-width:40em}
+.panel{max-width:520px}
+.panel input{border:2px solid var(--linea)}
+.panel .acc{display:flex;gap:12px;flex-wrap:wrap}
+.panel .btn{width:auto;font-size:16px;padding:12px 20px}
+.panel .btn[disabled]{opacity:.45;cursor:not-allowed}
+.msg2{min-height:1.4em;font-weight:500;margin:0;color:var(--gris)}
+.msg2.ok{color:var(--verde)}.msg2.error{color:var(--rojo)}
+.antes-despues{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.ficha{border:2px solid var(--linea);border-radius:14px;padding:18px;background:var(--papel);min-height:120px}
+.ficha h3{font-size:20px;margin-bottom:10px}
+.ficha dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:15px}
+.ficha dt{color:var(--gris)}.ficha dd{margin:0;font-weight:500;word-break:break-word}
+.ficha.vacia{color:var(--gris);display:flex;align-items:center;font-size:15px}
+.badge{display:inline-block;padding:2px 12px;border-radius:99px;font-weight:600;font-size:14px;color:#fff}
+.badge.Inscrita{background:var(--gris)}.badge.Atendida{background:var(--ambar);color:var(--tinta)}.badge.Activo{background:var(--verde)}
+@media (max-width:860px){.antes-despues{grid-template-columns:1fr}}
+@media (max-width:860px){
+ .hero,.dos,.formulario .wrap{grid-template-columns:1fr;gap:34px}
+ .planes{grid-template-columns:1fr;align-items:stretch}
+ .lista{box-shadow:6px 6px 0 var(--ambar)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+ <a class="marca" href="#">Zentrix Attendance</a>
+ <a class="btn" href="#inscribirme">Inscribir mi colegio</a>
+</header>
+
+<div class="hero">
+ <div>
+  <h1>Pasar lista en un minuto. Saber quién falta, al instante.</h1>
+  <p>Asistencia para primaria, de 1.° a 6.°. El docente elige su curso, marca solo a quien falta desde el celular, y el director ve las faltas por curso y por estudiante sin juntar planillas.</p>
+  <div class="acciones">
+   <a class="btn" href="#inscribirme">Inscribir mi colegio a la beta</a>
+   <a class="btn sec" href="#planes">Ver planes y precios</a>
+  </div>
+ </div>
+
+ <div class="lista" aria-label="Demostración de pasar lista">
+  <h2>3.° B <small>Resumen del día</small></h2>
+  <p class="ayuda">Prueba: toca P (presente), F (falta) o L (licencia) en cada estudiante.</p>
+  <div id="filas"></div>
+  <div class="resumen" aria-live="polite">
+   <span><b id="nP">0</b>presentes</span>
+   <span><b id="nL">0</b>licencias</span>
+   <span><b id="nF">0</b>faltas</span>
+  </div>
+ </div>
+</div>
+</div>
+
+<section>
+<div class="wrap dos">
+ <div>
+  <h2>El problema: las faltas se juntan a mano</h2>
+  <p>En muchos colegios la asistencia se anota en papel o en planillas de Excel, y cada fin de mes alguien debe consolidarla. El director se entera tarde de los estudiantes que más faltan y los reclamos de los padres se resuelven revisando hojas.</p>
+ </div>
+ <div>
+  <h2>Qué hace Zentrix Attendance</h2>
+  <p><strong>Una lista al día por curso.</strong> Todos aparecen presentes y el docente solo marca las faltas y licencias.</p>
+  <p><strong>Vista general para director y docentes.</strong> Las faltas por curso y por estudiante, con su historial.</p>
+  <p><strong>Alertas de faltas.</strong> El sistema avisa qué estudiantes llegaron al límite de faltas que defina el colegio.</p>
+  <p><strong>Sin cuentas ni contraseñas para los docentes.</strong> Entran con el código del colegio, eligen el curso y registran.</p>
+ </div>
+</div>
+</section>
+
+<section id="planes">
+<div class="wrap">
+ <h2>Planes</h2>
+ <p style="color:var(--gris);margin:0;max-width:38em">Todos incluyen los 6 cursos de primaria, hasta 180 estudiantes, la vista general y las alertas de faltas. Solo cambia la duración.</p>
+ <div class="planes">
+  <div class="plan">
+   <h3>Mensual</h3>
+   <div class="precio">Bs 80 <span>/ mes</span></div>
+   <p>Duración: 1 mes</p>
+  </div>
+  <div class="plan">
+   <h3>Trimestral</h3>
+   <div class="precio">Bs 220</div>
+   <p>Duración: 3 meses</p>
+   <p class="mes">Equivale a Bs 73 al mes</p>
+  </div>
+  <div class="plan destacado">
+   <h3>Anual</h3>
+   <div class="precio">Bs 660</div>
+   <p>Duración: 12 meses</p>
+   <p class="mes">Equivale a Bs 55 al mes</p>
+  </div>
+ </div>
+ <p class="nota">Piloto gratis de 30 días para los primeros colegios inscritos. Pago por transferencia o QR.</p>
+</div>
+</section>
+
+<section class="formulario" id="inscribirme">
+<div class="wrap">
+ <div>
+  <h2>Inscribe tu colegio a la beta</h2>
+  <p>Déjanos tus datos y te enviaremos por correo o WhatsApp el código de tu colegio con las instrucciones para probar el sistema.</p>
+  <p>Solo pedimos lo necesario para contactarte. No necesitamos datos de estudiantes para inscribirte.</p>
+ </div>
+ <form id="form" novalidate>
+  <label>Tu nombre
+   <input name="nombre" type="text" autocomplete="name" required maxlength="120">
+  </label>
+  <label>Nombre del colegio
+   <input name="colegio" type="text" required maxlength="120">
+  </label>
+  <label>Correo electrónico
+   <input name="correo" type="email" autocomplete="email" required maxlength="120">
+  </label>
+  <label>WhatsApp (opcional)
+   <input name="whatsapp" type="tel" autocomplete="tel" maxlength="20" placeholder="Ej.: 70000000">
+  </label>
+  <label>Plan que te interesa
+   <select name="plan">
+    <option value="Aún no lo sé">Aún no lo sé</option>
+    <option value="Mensual">Mensual: Bs 80 por 1 mes</option>
+    <option value="Trimestral">Trimestral: Bs 220 por 3 meses</option>
+    <option value="Anual">Anual: Bs 660 por 12 meses</option>
+   </select>
+  </label>
+  <button class="btn" type="submit" id="enviar">Inscribir mi colegio</button>
+  <p class="mensaje" id="mensaje" role="status" aria-live="polite"></p>
+ </form>
+</div>
+</section>
+
+<section id="atender">
+<div class="wrap">
+ <h2>Atender una inscripción</h2>
+ <p class="nota2">Uso interno. Busca a la persona por su correo o su teléfono, revisa su inscripción y márcala como Atendida. Solo se modifica la inscripción que coincide exactamente.</p>
+ <form id="atender-form" class="panel" novalidate>
+  <label>Clave de administración
+   <input type="password" id="clave" autocomplete="off">
+  </label>
+  <label>Correo o teléfono de la persona
+   <input type="text" id="dato" autocomplete="off" placeholder="correo@ejemplo.com o 70000000">
+  </label>
+  <div class="acc">
+   <button class="btn sec" type="submit" id="buscar">Buscar inscripción</button>
+   <button class="btn" type="button" id="atender-btn" disabled>Marcar como Atendida</button>
+  </div>
+  <p class="msg2" id="msg2" role="status" aria-live="polite"></p>
+ </form>
+ <div class="antes-despues">
+  <div class="ficha vacia" id="antes">Aquí aparecerá la inscripción antes del cambio.</div>
+  <div class="ficha vacia" id="despues">Aquí aparecerá la inscripción después del cambio.</div>
+ </div>
+</div>
+</section>
+
+<div class="wrap"><footer>Zentrix Attendance. Proyecto de Desarrollo de Sistemas II, UPDS Tarija.</footer></div>
+
+<script>
+// Proyecto de Supabase (ZentrixLanding). La clave publishable es segura en el navegador gracias a RLS.
+const SUPABASE_URL = "https://zvwbsrihknpxyqrujrqn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_bV9xr03s4vIT4feBZMjFYw_qFfVy6zT";
+
+// ---- Demostración de la lista ----
+const alumnos = [
+ {n:"Pedro Rojas", e:"presente"}, {n:"Lucía Mamani", e:"presente"},
+ {n:"Diego Flores", e:"falta"}, {n:"Valeria Quispe", e:"presente"},
+ {n:"Mateo Vargas", e:"licencia"}, {n:"Camila Choque", e:"presente"}
+];
+const opciones = [["presente","P"],["falta","F"],["licencia","L"]];
+const etiqueta = {presente:"Presente", falta:"Falta", licencia:"Licencia"};
+const cont = document.getElementById("filas");
+
+function pintar(foco){
+ cont.innerHTML = "";
+ alumnos.forEach((a,i)=>{
+  const fila = document.createElement("div");
+  fila.className = "fila";
+  const nombre = document.createElement("span");
+  nombre.textContent = a.n;
+  const grupo = document.createElement("div");
+  grupo.className = "opciones";
+  grupo.setAttribute("role","group");
+  grupo.setAttribute("aria-label","Asistencia de " + a.n);
+  opciones.forEach(([clave,letra])=>{
+   const b = document.createElement("button");
+   b.type = "button";
+   b.className = "op" + (a.e===clave ? " on " + clave : "");
+   b.textContent = letra;
+   b.setAttribute("aria-label", etiqueta[clave]);
+   b.setAttribute("aria-pressed", a.e===clave);
+   b.onclick = () => { a.e = clave; pintar([i,clave]); };
+   grupo.appendChild(b);
+  });
+  fila.append(nombre, grupo);
+  cont.appendChild(fila);
+ });
+ if (foco){
+  const k = opciones.findIndex(o=>o[0]===foco[1]);
+  cont.children[foco[0]].querySelectorAll(".op")[k].focus();
+ }
+ document.getElementById("nP").textContent = alumnos.filter(a=>a.e==="presente").length;
+ document.getElementById("nL").textContent = alumnos.filter(a=>a.e==="licencia").length;
+ document.getElementById("nF").textContent = alumnos.filter(a=>a.e==="falta").length;
+}
+pintar();
+
+// ---- Formulario de inscripción ----
+const form = document.getElementById("form");
+const msg = document.getElementById("mensaje");
+const btn = document.getElementById("enviar");
+
+function aviso(texto, tipo){ msg.textContent = texto; msg.className = "mensaje " + tipo; }
+
+form.addEventListener("submit", async (ev) => {
+ ev.preventDefault();
+ const d = Object.fromEntries(new FormData(form).entries());
+ const nombre = d.nombre.trim(), colegio = d.colegio.trim(), correo = d.correo.trim();
+
+ if (!nombre || !colegio || !correo) return aviso("Completa tu nombre, el colegio y el correo.", "error");
+ if (!/^\S+@\S+\.\S+$/.test(correo)) return aviso("Escribe un correo válido, por ejemplo nombre@correo.com.", "error");
+ if (SUPABASE_URL.includes("TU-PROYECTO") || SUPABASE_KEY.includes("TU_")) return aviso("Falta configurar Supabase en el código de la página.", "error");
+
+ btn.disabled = true;
+ aviso("Enviando...", "");
+ try {
+  const r = await fetch(SUPABASE_URL + "/rest/v1/interesados", {
+   method: "POST",
+   headers: {
+    "Content-Type": "application/json",
+    "apikey": SUPABASE_KEY,
+    "Prefer": "return=minimal"
+   },
+   body: JSON.stringify({
+    nombre, colegio, correo,
+    whatsapp: d.whatsapp.replace(/\D/g, "") || null,
+    plan_interes: d.plan
+   })
+  });
+  if (!r.ok) throw new Error("Respuesta " + r.status);
+  form.reset();
+  aviso("Listo, te inscribimos. Te enviaremos el código de tu colegio por correo o WhatsApp.", "ok");
+ } catch (e) {
+  aviso("No se pudo enviar la inscripción. Revisa tu conexión e inténtalo de nuevo.", "error");
+ } finally {
+  btn.disabled = false;
+ }
+});
+
+// ---- Atender inscripciones (GET para ver antes, PUT para cambiar el estado) ----
+const API = "/api/inscripciones";
+const fAt = document.getElementById("atender-form");
+const msg2 = document.getElementById("msg2");
+const btnAt = document.getElementById("atender-btn");
+const cAntes = document.getElementById("antes"), cDesp = document.getElementById("despues");
+let ident = null;
+
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function aviso2(t, tipo){ msg2.textContent = t; msg2.className = "msg2 " + (tipo || ""); }
+function identificar(v){
+ v = v.trim();
+ if (/^\S+@\S+\.\S+$/.test(v)) return {correo: v};
+ const t = v.replace(/\D/g, "");
+ if (t.length >= 7 && t.length <= 15) return {telefono: t};
+ return null;
+}
+function ficha(el, titulo, r){
+ el.className = "ficha";
+ el.innerHTML = "<h3>" + titulo + "</h3><dl>" +
+  "<dt>Nombre</dt><dd>" + esc(r.nombre) + "</dd>" +
+  "<dt>Colegio</dt><dd>" + esc(r.colegio) + "</dd>" +
+  "<dt>Correo</dt><dd>" + esc(r.correo) + "</dd>" +
+  "<dt>WhatsApp</dt><dd>" + esc(r.whatsapp || "-") + "</dd>" +
+  "<dt>Plan</dt><dd>" + esc(r.plan_interes) + "</dd>" +
+  '<dt>Estado</dt><dd><span class="badge ' + esc(r.estado) + '">' + esc(r.estado) + "</span></dd></dl>";
+}
+function vaciar(){
+ cAntes.className = "ficha vacia"; cAntes.textContent = "Aquí aparecerá la inscripción antes del cambio.";
+ cDesp.className = "ficha vacia"; cDesp.textContent = "Aquí aparecerá la inscripción después del cambio.";
+}
+async function llamar(metodo, p, estado){
+ const clave = document.getElementById("clave").value;
+ const opciones = {method: metodo, headers: {"x-admin-key": clave}};
+ let url = API;
+ if (metodo === "GET") url += "?" + new URLSearchParams(p);
+ else { opciones.headers["Content-Type"] = "application/json"; opciones.body = JSON.stringify({...p, estado}); }
+ const r = await fetch(url, opciones);
+ const datos = await r.json().catch(() => ({}));
+ return {ok: r.ok, estado: r.status, datos};
+}
+
+fAt.addEventListener("submit", async ev => {
+ ev.preventDefault();
+ btnAt.disabled = true; ident = null; vaciar();
+ if (!document.getElementById("clave").value) return aviso2("Escribe la clave de administración.", "error");
+ const p = identificar(document.getElementById("dato").value);
+ if (!p) return aviso2("Escribe un correo válido o un teléfono de 7 a 15 dígitos.", "error");
+ aviso2("Buscando...");
+ try {
+  const r = await llamar("GET", p);
+  if (!r.ok) return aviso2(r.datos.error || "No se pudo consultar la inscripción.", "error");
+  ident = p;
+  ficha(cAntes, "Antes", r.datos.inscripcion);
+  if (r.datos.inscripcion.estado === "Inscrita") { btnAt.disabled = false; aviso2("Inscripción encontrada. Puedes marcarla como Atendida.", "ok"); }
+  else aviso2("La inscripción ya está en estado " + r.datos.inscripcion.estado + ".", "");
+ } catch { aviso2("No se pudo conectar con el servidor.", "error"); }
+});
+
+btnAt.addEventListener("click", async () => {
+ if (!ident) return;
+ btnAt.disabled = true; aviso2("Actualizando...");
+ try {
+  const r = await llamar("PUT", ident, "Atendida");
+  if (!r.ok) { aviso2(r.datos.error || "No se pudo actualizar la inscripción.", "error"); return; }
+  ficha(cAntes, "Antes", r.datos.antes);
+  ficha(cDesp, "Después", r.datos.despues);
+  aviso2("Listo: la inscripción pasó de Inscrita a Atendida.", "ok");
+ } catch { aviso2("No se pudo conectar con el servidor.", "error"); }
+});
+</script>
+</body>
+</html>
